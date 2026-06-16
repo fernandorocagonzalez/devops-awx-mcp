@@ -13,7 +13,8 @@ class WorkflowService:
         return self.client.request("POST", f"/api/v2/workflow_job_templates/{template_id}/launch/", data=data)
 
     def list_jobs(self, status: str = None, limit: int = 100, offset: int = 0) -> list[dict]:
-        params = {"limit": limit, "offset": offset}
+        page = (offset // limit) + 1 if limit > 0 else 1
+        params = {"page_size": limit, "page": page}
         if status:
             params["status"] = status
         return handle_pagination(self.client, "/api/v2/workflow_jobs/", params)

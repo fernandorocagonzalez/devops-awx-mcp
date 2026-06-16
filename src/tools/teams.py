@@ -10,7 +10,8 @@ def register_team_tools(mcp, service: BaseCRUDService, client: AnsibleClient):
     def list_teams(organization_id: int = None, limit: int = 100, offset: int = 0) -> str:
         """List teams, optionally filtered by organization."""
         with client:
-            params = {"limit": limit, "offset": offset}
+            page = (offset // limit) + 1 if limit > 0 else 1
+            params = {"page_size": limit, "page": page}
             endpoint = f"/api/v2/organizations/{organization_id}/teams/" if organization_id else "/api/v2/teams/"
             return json.dumps(handle_pagination(client, endpoint, params), indent=2)
 

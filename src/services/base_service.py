@@ -8,7 +8,8 @@ class BaseCRUDService:
         self.endpoint = endpoint
 
     def list(self, limit: int = 100, offset: int = 0, **filters) -> list[dict]:
-        params = {"limit": limit, "offset": offset, **filters}
+        page = (offset // limit) + 1 if limit > 0 else 1
+        params = {"page_size": limit, "page": page, **filters}
         return handle_pagination(self.client, self.endpoint, params)
 
     def get(self, resource_id: int) -> dict:

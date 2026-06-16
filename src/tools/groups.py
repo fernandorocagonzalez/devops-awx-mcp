@@ -11,7 +11,8 @@ def register_group_tools(mcp, service: BaseCRUDService, group_ops: GroupService)
     def list_groups(inventory_id: int, limit: int = 100, offset: int = 0) -> str:
         """List groups in an inventory."""
         with service.client:
-            params = {"limit": limit, "offset": offset}
+            page = (offset // limit) + 1 if limit > 0 else 1
+            params = {"page_size": limit, "page": page}
             return json.dumps(handle_pagination(service.client, f"/api/v2/inventories/{inventory_id}/groups/", params), indent=2)
 
     @mcp.tool()

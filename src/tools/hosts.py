@@ -11,7 +11,8 @@ def register_host_tools(mcp, service: BaseCRUDService, client: AnsibleClient):
     def list_hosts(inventory_id: int = None, limit: int = 100, offset: int = 0) -> str:
         """List hosts, optionally filtered by inventory."""
         with client:
-            params = {"limit": limit, "offset": offset}
+            page = (offset // limit) + 1 if limit > 0 else 1
+            params = {"page_size": limit, "page": page}
             endpoint = f"/api/v2/inventories/{inventory_id}/hosts/" if inventory_id else "/api/v2/hosts/"
             return json.dumps(handle_pagination(client, endpoint, params), indent=2)
 

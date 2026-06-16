@@ -8,7 +8,8 @@ class JobService:
         self.client = client
 
     def list_jobs(self, status: str = None, limit: int = 100, offset: int = 0) -> list[dict]:
-        params = {"limit": limit, "offset": offset}
+        page = (offset // limit) + 1 if limit > 0 else 1
+        params = {"page_size": limit, "page": page}
         if status:
             params["status"] = status
         return handle_pagination(self.client, "/api/v2/jobs/", params)
@@ -20,7 +21,8 @@ class JobService:
         return self.client.request("POST", f"/api/v2/jobs/{job_id}/cancel/")
 
     def get_events(self, job_id: int, limit: int = 100, offset: int = 0) -> list[dict]:
-        params = {"limit": limit, "offset": offset}
+        page = (offset // limit) + 1 if limit > 0 else 1
+        params = {"page_size": limit, "page": page}
         return handle_pagination(self.client, f"/api/v2/jobs/{job_id}/job_events/", params)
 
     def get_stdout(self, job_id: int, fmt: str = "txt") -> dict:
